@@ -32,6 +32,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Initialize game state
+@st.cache_data
 def initialize_game(width, height):
     return np.random.choice([0, 1, 2], size=(height, width), p=[0.8, 0.1, 0.1])
 
@@ -62,7 +63,7 @@ st.title("🧬 Neon Conway's Game of Life")
 st.sidebar.title("🎛️ Controls")
 width = st.sidebar.slider("Width", 10, 100, 50)
 height = st.sidebar.slider("Height", 10, 100, 50)
-frame_rate = st.sidebar.slider("Frame Rate", 1, 60, 10)
+frame_rate = st.sidebar.slider("Frame Rate", 1, 30, 10)
 
 # Initialize game state
 if 'game_state' not in st.session_state:
@@ -94,13 +95,10 @@ plt.tight_layout()
 game_plot = st.pyplot(fig)
 
 # Main game loop
-def run_game():
-    while st.session_state.game_running:
-        st.session_state.game_state = update_game(st.session_state.game_state)
-        img.set_data(st.session_state.game_state)
-        game_plot.pyplot(fig)
-        plt.close(fig)
-        st.experimental_rerun()
-
-run_game()
+if st.session_state.game_running:
+    st.session_state.game_state = update_game(st.session_state.game_state)
+    img.set_data(st.session_state.game_state)
+    game_plot.pyplot(fig)
+    plt.close(fig)
+    st.rerun()
 
